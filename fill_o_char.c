@@ -12,9 +12,9 @@ int currentPos = 0;
 
 int main()
 {
-    // int temp = width;
-    // width = height;
-    // height = temp;
+    int temp = width;
+    width = height;
+    height = temp;
 
     for (h = 0; h < height; h++)
     {
@@ -22,7 +22,7 @@ int main()
         {
             // printOAt(currentPos, h); //ver1
             // printOAt(width - currentPos - 1, height - h - 1); //ver2
-            // printOAt(h,width - currentPos -1); //ver3
+            printOAt(h,width - currentPos -1); //ver3
             // printOAt(height - h - 1,currentPos);
             if (h % 2 == 0)
                 currentPos++;
