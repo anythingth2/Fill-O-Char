@@ -12,95 +12,101 @@ currentPos     db      ?                        ;store current cursor's position
 main:   
         
 startIterateByHeight:                           
-        mov     h,0h
+        mov     h,0h                            ;init iterate variable for outside loop
 iterateByHeight:
         
         call    startIterateByWidth             ;call inside for loop
         
-        mov     dx,0                            ;if h % 2 == 0 
-        mov     al,h                            
+        ;if h % 2 == 0 
+        mov     dx,0                            ;clear dividend 
+        mov     al,h                            ;load h to ax         
         cbw
-        mov     cx,2
-        div     cx
-        cmp     dx,0
-        je      mod2equal0clear
-        jne     mod2notequal0clear
+        mov     cx,2                            ;let 2 is divisor
+        div     cx                              ;divide
+        cmp     dx,0                            ;compare dividend is 0
+        je      mod2equal0clear                 ;clear extra character
+        jne     mod2notequal0clear              ;clear extra character
 backIf:
-        inc     h                               
+        ;compare h,hei
+        inc     h                               ;increment h        
         mov     ch,hei
         cmp     h,ch
 
-        jl      iterateByHeight
+        jl      iterateByHeight                 ;start new loop until h >= hei
         
         ret
 startIterateByWidth:
         mov     w,0h
 iterateByWidth:
-       
-        mov     dh,hei                                   ;dh = row 
-        sub     dh,h
+        ;move cursor to dh,dl
+        mov     dh,hei                                  ;dh = row 
+        sub     dh,h                                    ;dh = hei - h -1
         sub     dh,1
         
-        mov     dl,wid                            ;dl = column             
+        mov     dl,wid                                  ;dl = column             
         sub     dl,currentPos
         sub     dl,1
         
         call    printO                          ;print 'O'                   
         
-        mov     dx,0                            ;if h % 2 == 0 
+        ;if h % 2 == 0 
+        mov     dx,0                            ;clear dividend
         mov     al,h                            
-        cbw
-        mov     cx,2
-        div     cx
-        cmp     dx,0
-        je      mod2equal0
-        jne     mod2notequal0
+        cbw                                     ;load h to ax
+        mov     cx,2                            ;let 2 is divisor
+        div     cx                              ;divide
+        cmp     dx,0                            ;compare dividend is 0
+        je      mod2equal0                      ;increment currentPos
+        jne     mod2notequal0                   ;decrement currentPos        
 
 back:
-        ; mov     cx,4E20h
-        mov     cx,1A00h
+
+        mov     cx,1A00h                        ;set number of loop   
         call    sleep                           ;sleep                   
 
         inc     w
         mov     ch,wid
         cmp     w,ch
         
-
-        jl      iterateByWidth
+        jl      iterateByWidth                  ;start new loop
         
         ret
 mod2equal0:
+        ;increment currentPos
         inc     currentPos
         jmp     back
 mod2notequal0:
+        ;decrement currentPos
         dec     currentPos
         jmp     back
 
 mod2equal0clear:
+        ;decrement currentPos
         sub     currentPos,1
-        ; dec     currentPos
+
         jmp     backIf
 mod2notequal0clear:
+        ;increment currentPos
         add     currentPos,1
-        ; inc     currentPos
+
         jmp     backIf
 
 
 printO: 
         mov     ah,02h  
-        mov     bh,0h                        ;move cursor
-        int     10h
+        mov     bh,0h                           ;move cursor
+        int     10h                             ;call move cursor interrupt
 
         mov     ah,0Ah                          ;print O
         mov     al,'O'
         mov     bh,0h
         mov     cx,1h
-        int     10h
+        int     10h                             ;call printO interrupt
 
         ret
 
 sleep:
-        nop
-        loop    sleep
+        nop                                     ;do nothing
+        loop    sleep                           ;loop until cx is zero
         ret
         end     main
